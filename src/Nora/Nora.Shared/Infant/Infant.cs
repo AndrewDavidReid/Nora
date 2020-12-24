@@ -1,8 +1,8 @@
 using System;
 
-namespace Nora.Shared.Newborn
+namespace Nora.Shared.Infant
 {
-  public class Newborn
+  public class Infant
   {
     public Guid Id { get; set; }
     public string FirstName { get; set; }

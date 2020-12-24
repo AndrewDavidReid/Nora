@@ -1,8 +1,8 @@
 using System;
 
-namespace Nora.Shared.Newborn
+namespace Nora.Shared.Infant
 {
-  public static class RegisterNewborn
+  public static class RegisterInfant
   {
     public class Request
     {
@@ -14,7 +14,7 @@ namespace Nora.Shared.Newborn
 
     public class Response
     {
-      public Guid NewbornId { get; set; }
+      public Guid InfantId { get; set; }
     }
   }
 }

@@ -6,7 +6,7 @@ namespace Nora.Shared.Scheduling
   public class FeedingSchedule
   {
     public Guid Id { get; set; }
-    public Guid NewbornId { get; set; }
+    public Guid InfantId { get; set; }
     public string TimeZone { get; set; }
 
     public DateTime CreatedOn { get; set; }
