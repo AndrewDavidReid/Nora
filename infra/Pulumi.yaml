@@ -1,0 +1,3 @@
+name: _infra
+runtime: dotnet
+description: Infrastructure for the NORA project

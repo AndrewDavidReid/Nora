@@ -1,25 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Ardalis.ApiEndpoints" Version="2.0.0" />
-        <PackageReference Include="Ardalis.ApiEndpoints.CodeAnalyzers" Version="1.1.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ardalis.ApiEndpoints" Version="2.0.0"/>
+    <PackageReference Include="Ardalis.ApiEndpoints.CodeAnalyzers" Version="1.1.1"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1"/>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3"/>
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="FeedingScheduleEndpoints" />
-      <Folder Include="Profile" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FeedingScheduleEndpoints"/>
+    <Folder Include="Profile"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Nora.Shared\Nora.Shared.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Nora.Shared\Nora.Shared.csproj"/>
+  </ItemGroup>
 
 </Project>
