@@ -2,7 +2,6 @@ using Pulumi;
 using Pulumi.Azure.AppService;
 using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
-using Pulumi.Azure.Storage;
 
 class NoraAzureStack : Stack
 {
@@ -10,7 +9,7 @@ class NoraAzureStack : Stack
   {
     var resourceGroup = new ResourceGroup("nora");
 
-    // App Service Plan
+    // Import an existing app service plan for this configuration.
     var appServicePlan = new Plan("home-projects-asp", new PlanArgs
     {
       Name = "home-projects-asp",
@@ -35,11 +34,16 @@ class NoraAzureStack : Stack
       AppServicePlanId = appServicePlan.Id
     });
 
-    var hostName = new CustomHostnameBinding("nora-web-app-host", new CustomHostnameBindingArgs
+    var hostNameBinding = new CustomHostnameBinding("nora-web-hostname", new CustomHostnameBindingArgs
     {
-      Hostname = "dev-nora.momo-adew.com",
+      Hostname = "nora.momo-adew.com",
       AppServiceName = webApp.Name,
       ResourceGroupName = resourceGroup.Name
+    });
+
+    var sslCert = new ManagedCertificate("nora-web-cert", new ManagedCertificateArgs
+    {
+      CustomHostnameBindingId = hostNameBinding.Id
     });
   }
 
