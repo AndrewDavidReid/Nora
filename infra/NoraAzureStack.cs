@@ -2,6 +2,7 @@ using Pulumi;
 using Pulumi.Azure.AppService;
 using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
+using Pulumi.Azure.CosmosDB;
 
 class NoraAzureStack : Stack
 {
@@ -9,7 +10,7 @@ class NoraAzureStack : Stack
   {
     var resourceGroup = new ResourceGroup("nora");
 
-    // Import an existing app service plan for this configuration.
+    // Import existing app service plan.
     var appServicePlan = new Plan("home-projects-asp", new PlanArgs
     {
       Name = "home-projects-asp",
@@ -27,6 +28,19 @@ class NoraAzureStack : Stack
       Protect = true
     });
 
+    // Import existing cosmosdb account.
+    var cosmosDbAccount = new Account("home-projects-cosmosdb", new AccountArgs
+    {
+      Name = "home-projects-cosmosdb",
+      ResourceGroupName = "Shared",
+      EnableFreeTier = true,
+      GeoLocations =
+    }, new CustomResourceOptions
+    {
+      ImportId = "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.DocumentDB/databaseAccounts/home-projects-cosmosdb",
+      Protect = true
+    });
+
     var webApp = new AppService("nora-web", new AppServiceArgs
     {
       ResourceGroupName = resourceGroup.Name,
@@ -34,17 +48,17 @@ class NoraAzureStack : Stack
       AppServicePlanId = appServicePlan.Id
     });
 
-    var hostNameBinding = new CustomHostnameBinding("nora-web-hostname", new CustomHostnameBindingArgs
-    {
-      Hostname = "nora.momo-adew.com",
-      AppServiceName = webApp.Name,
-      ResourceGroupName = resourceGroup.Name
-    });
+    // var hostNameBinding = new CustomHostnameBinding("nora-web-hostname", new CustomHostnameBindingArgs
+    // {
+    //   Hostname = "nora.momo-adew.com",
+    //   AppServiceName = webApp.Name,
+    //   ResourceGroupName = resourceGroup.Name
+    // });
 
-    var sslCert = new ManagedCertificate("nora-web-cert", new ManagedCertificateArgs
-    {
-      CustomHostnameBindingId = hostNameBinding.Id
-    });
+    // var sslCert = new ManagedCertificate("nora-web-cert", new ManagedCertificateArgs
+    // {
+    //   CustomHostnameBindingId = hostNameBinding.Id
+    // });
   }
 
   [Output]
