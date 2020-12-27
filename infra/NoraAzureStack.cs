@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Pulumi;
 using Pulumi.Azure.AppService;
 using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
 using Pulumi.Azure.CosmosDB;
+using Pulumi.Azure.CosmosDB.Inputs;
 
 class NoraAzureStack : Stack
 {
@@ -24,7 +26,8 @@ class NoraAzureStack : Stack
       Reserved = true
     }, new CustomResourceOptions
     {
-      ImportId = "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.Web/serverfarms/home-projects-asp",
+      ImportId =
+        "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.Web/serverfarms/home-projects-asp",
       Protect = true
     });
 
@@ -34,10 +37,32 @@ class NoraAzureStack : Stack
       Name = "home-projects-cosmosdb",
       ResourceGroupName = "Shared",
       EnableFreeTier = true,
+      EnableAutomaticFailover = false,
+      EnableMultipleWriteLocations = false,
       GeoLocations =
+      {
+        new AccountGeoLocationArgs
+        {
+          Location = resourceGroup.Location,
+          FailoverPriority = 0
+        }
+      },
+      ConsistencyPolicy = new AccountConsistencyPolicyArgs
+      {
+        ConsistencyLevel = "Session",
+        MaxIntervalInSeconds = 5,
+        MaxStalenessPrefix = 100
+      },
+      OfferType = "Standard",
+      Tags =
+      {
+        { "CosmosAccountType", "Non-Production" },
+        { "defaultExperience", "Core (SQL)" }
+      }
     }, new CustomResourceOptions
     {
-      ImportId = "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.DocumentDB/databaseAccounts/home-projects-cosmosdb",
+      ImportId =
+        "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.DocumentDB/databaseAccounts/home-projects-cosmosdb",
       Protect = true
     });
 
