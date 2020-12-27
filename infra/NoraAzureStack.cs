@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using Pulumi;
 using Pulumi.Azure.AppService;
-using Pulumi.Azure.AppService.Inputs;
 using Pulumi.Azure.Core;
 using Pulumi.Azure.CosmosDB;
-using Pulumi.Azure.CosmosDB.Inputs;
 
 class NoraAzureStack : Stack
 {
@@ -12,59 +9,13 @@ class NoraAzureStack : Stack
   {
     var resourceGroup = new ResourceGroup("nora");
 
-    // Import existing app service plan.
-    var appServicePlan = new Plan("home-projects-asp", new PlanArgs
-    {
-      Name = "home-projects-asp",
-      ResourceGroupName = "Shared",
-      Kind = "Linux",
-      Sku = new PlanSkuArgs
-      {
-        Tier = "Basic",
-        Size = "B1"
-      },
-      Reserved = true
-    }, new CustomResourceOptions
-    {
-      ImportId =
-        "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.Web/serverfarms/home-projects-asp",
-      Protect = true
-    });
+    // Reference existing app service plan.
+    var appServicePlan = Plan.Get("home-projects-asp",
+      "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.Web/serverfarms/home-projects-asp");
 
-    // Import existing cosmosdb account.
-    var cosmosDbAccount = new Account("home-projects-cosmosdb", new AccountArgs
-    {
-      Name = "home-projects-cosmosdb",
-      ResourceGroupName = "Shared",
-      EnableFreeTier = true,
-      EnableAutomaticFailover = false,
-      EnableMultipleWriteLocations = false,
-      GeoLocations =
-      {
-        new AccountGeoLocationArgs
-        {
-          Location = resourceGroup.Location,
-          FailoverPriority = 0
-        }
-      },
-      ConsistencyPolicy = new AccountConsistencyPolicyArgs
-      {
-        ConsistencyLevel = "Session",
-        MaxIntervalInSeconds = 5,
-        MaxStalenessPrefix = 100
-      },
-      OfferType = "Standard",
-      Tags =
-      {
-        { "CosmosAccountType", "Non-Production" },
-        { "defaultExperience", "Core (SQL)" }
-      }
-    }, new CustomResourceOptions
-    {
-      ImportId =
-        "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.DocumentDB/databaseAccounts/home-projects-cosmosdb",
-      Protect = true
-    });
+    // Reference existing cosmosdb account.
+    var cosmosDbAccount = Account.Get("home-projects-cosmosdb",
+      "/subscriptions/72fc2865-939d-4afc-80d4-ab60f14c099e/resourceGroups/Shared/providers/Microsoft.DocumentDB/databaseAccounts/home-projects-cosmosdb");
 
     var webApp = new AppService("nora-web", new AppServiceArgs
     {
