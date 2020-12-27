@@ -28,10 +28,11 @@ class NoraAzureStack : Stack
       AppServicePlanId = appServicePlan.Id
     });
 
+    // https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain
     var customDomainName = AddEnvironmentPrefix("nora.momo-adew.com");
     var verificationDomainName = $"asuid.{customDomainName}";
 
-    var verificationRecord = new Record(AddEnvironmentPrefix("nora-web-txt-record"), new RecordArgs
+    var verificationRecord = new Record("nora-web-txt-record", new RecordArgs
     {
       Name = verificationDomainName,
       ZoneId = dnsZone.Id,
@@ -40,7 +41,7 @@ class NoraAzureStack : Stack
       Ttl = 300
     });
 
-    var cnameRecord = new Record(AddEnvironmentPrefix("nora-web-cname-record"), new RecordArgs
+    var cnameRecord = new Record("nora-web-cname-record", new RecordArgs
     {
       Name = customDomainName,
       ZoneId = dnsZone.Id,
@@ -49,7 +50,7 @@ class NoraAzureStack : Stack
       Ttl = 300
     });
 
-    var hostNameBinding = new CustomHostnameBinding(AddEnvironmentPrefix("nora-web-hostname"), new CustomHostnameBindingArgs
+    var hostNameBinding = new CustomHostnameBinding("nora-web-hostname", new CustomHostnameBindingArgs
     {
       Hostname = customDomainName,
       AppServiceName = webApp.Name,
@@ -71,7 +72,7 @@ class NoraAzureStack : Stack
 
   private string AddEnvironmentPrefix(string input)
   {
-    var environmentName = Deployment.Instance.StackName;
+    var environmentName = Deployment.Instance.StackName.ToLower();
 
     // For non-prod environments, prefix the deployment with the stack name.
     return environmentName == "production" ? input : $"{environmentName}-{input}";
