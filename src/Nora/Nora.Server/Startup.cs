@@ -32,6 +32,8 @@ namespace Nora.Server
         c.SwaggerDoc("v1", new OpenApiInfo {Title = "Nora.Server", Version = "v1"});
         c.EnableAnnotations();
       });
+
+      services.AddSingleton<DocumentClient>()
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
