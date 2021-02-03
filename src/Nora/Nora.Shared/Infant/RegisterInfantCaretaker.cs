@@ -1,6 +1,6 @@
 namespace Nora.Shared.Infant
 {
-  public static class RegisterInfantGuardian
+  public static class RegisterInfantCaretaker
   {
     public class Request
     {

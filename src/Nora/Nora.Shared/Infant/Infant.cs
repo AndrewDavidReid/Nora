@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Nora.Shared.Journaling;
+using System.Text.Json.Serialization;
+using Nora.Shared.Caretaker;
 using Nora.Shared.Scheduling;
 
 namespace Nora.Shared.Infant
 {
   public class Infant
   {
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
+
     public DateTime CreatedOn { get; set; }
     public Guid CreatedBy { get; set; }
 
@@ -16,11 +19,8 @@ namespace Nora.Shared.Infant
     public string LastName { get; set; }
     public DateTime DateOfBirth { get; set; }
 
-
-    public IEnumerable<Guid> GuardianIds { get; set; } = new List<Guid>();
-    public IEnumerable<Guid> CaregiverIds { get; set; } = new List<Guid>();
+    public IEnumerable<CaretakerSummary> Caretakers { get; set; } = new List<CaretakerSummary>();
 
     public FeedingSchedule FeedingSchedule { get; set; }
-    public IEnumerable<JournalEntry> JournalEntries { get; set; } = new List<JournalEntry>();
   }
 }

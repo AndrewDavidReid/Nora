@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Cosmos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,12 +17,14 @@ namespace Nora.Server
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
     {
-      Configuration = configuration;
+      _webHostEnvironment = webHostEnvironment;
+      _configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IConfiguration _configuration;
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
@@ -33,13 +36,14 @@ namespace Nora.Server
         c.EnableAnnotations();
       });
 
-      services.AddSingleton<DocumentClient>()
+      services.AddSingleton<CosmosClient>(InitCosmosDbAsync().GetAwaiter().GetResult());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app)
     {
-      if (env.IsDevelopment())
+
+      if (_webHostEnvironment.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
@@ -53,6 +57,23 @@ namespace Nora.Server
       app.UseRouting();
       app.UseAuthorization();
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+    }
+
+    private async Task<CosmosClient> InitCosmosDbAsync()
+    {
+      var cosmosClient = new CosmosClient(_configuration["CosmosDbEndpointUrl"], _configuration["CosmosDbAuthorizationKey"]);
+
+      var databaseId = $"{_webHostEnvironment.EnvironmentName}-NoraDb";
+      var userContainerId = $"{_webHostEnvironment.EnvironmentName}-UserContainer";
+      var infantContainerId = $"{_webHostEnvironment.EnvironmentName}-InfantContainer";
+      var journalEntryContainerId = $"{_webHostEnvironment.EnvironmentName}-JournalEntryContainer";
+
+      var databaseResponse = await cosmosClient.CreateDatabaseIfNotExistsAsync(databaseId);
+      await databaseResponse.Database.CreateContainerIfNotExistsAsync(userContainerId, "/Email");
+      await databaseResponse.Database.CreateContainerIfNotExistsAsync(infantContainerId, "/id");
+      await databaseResponse.Database.CreateContainerIfNotExistsAsync(journalEntryContainerId, "/InfantId");
+
+      return cosmosClient;
     }
   }
 }
