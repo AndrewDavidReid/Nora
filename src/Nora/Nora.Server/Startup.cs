@@ -36,6 +36,9 @@ namespace Nora.Server
         c.EnableAnnotations();
       });
 
+      services
+        .AddIdentityServer();
+
       services.AddSingleton<CosmosClient>(InitCosmosDbAsync().GetAwaiter().GetResult());
     }
 
@@ -54,7 +57,9 @@ namespace Nora.Server
       }
 
       app.UseHttpsRedirection();
+      app.UseIdentityServer();
       app.UseRouting();
+      app.UseAuthentication();
       app.UseAuthorization();
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
