@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Azure.Cosmos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Nora.Server.Auth;
 
 namespace Nora.Server
 {
@@ -37,7 +34,26 @@ namespace Nora.Server
       });
 
       services
-        .AddIdentityServer();
+        .AddIdentityServer()
+        .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
+        .AddInMemoryApiResources(IdentityServerConfig.Apis)
+        .AddInMemoryClients(IdentityServerConfig.Clients)
+        .AddInMemoryApiScopes(IdentityServerConfig.Scopes);
+
+
+      services
+        .AddAuthentication()
+        .AddIdentityServerJwt()
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        {
+          options.Audience = "nora-api";
+          // TODO: Audience for URL.
+          options.Authority = "";
+          options.TokenValidationParameters.ValidTypes = new []
+          {
+            ""
+          };
+        });
 
       services.AddSingleton<CosmosClient>(InitCosmosDbAsync().GetAwaiter().GetResult());
     }
@@ -45,7 +61,6 @@ namespace Nora.Server
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app)
     {
-
       if (_webHostEnvironment.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
